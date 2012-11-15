@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- <import resource="classpath:/META-INF/spring/app-context.xml" /> -->
+
+
+	<!-- <jdbc:embedded-database id="dataSource1" type="H2"> <jdbc:script location="classpath:my-schema.sql" 
+		/> </jdbc:embedded-database> -->
+
+
+	<!-- hsqldb -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:testdb;shutdown=true" />
+		<property name="username" value="SA" />
+		<property name="password" value="" />
+	</bean>
+
+	<!-- oracle -->
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" 
+		/> <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" /> <property 
+		name="username" value="HR" /> <property name="password" value="HR" /> </bean> -->
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- Hibernate configuration -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop> <!-- org.hibernate.dialect.Oracle10gDialect -->
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.validator.apply_to_ddl">true</prop>
+				<!-- <prop key="hibernate.default_schema">HR</prop> -->
+			</props>
+		</property>
+		<!-- The packages that contain Hibernate model classes -->
+		<property name="packagesToScan">
+			<list>
+				<value>com.sample.dao.inheritance</value>
+			</list>
+		</property>
+	</bean>
+
+
+
+	<bean id="hibernateConfiguration" factory-bean="&amp;sessionFactory"
+		factory-method="getConfiguration" />
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+	<bean id="customerDao" class="com.hib.sample.dao.CustomerDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+
+	<bean id="productDao" class="com.hib.sample.dao.ProductDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+
+	<bean id="supplierDao" class="com.hib.sample.dao.SupplierDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+
+
+	<bean id="departmentDao" class="com.hib.sample.dao.hr.DepartmentDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean id="employeeDao" class="com.hib.sample.dao.hr.EmployeeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	<bean id="accountDao" class="com.sample.dao.inheritance.SavingsAccountDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+</beans>

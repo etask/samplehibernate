@@ -1,0 +1,60 @@
+create table COUNTRIES (
+	COUNTRY_ID integer not null, 
+	COUNTRY_NAME varchar(255), 
+	region_REGION_ID integer, 
+	primary key (COUNTRY_ID));
+	
+create table DEPARTMENTS (
+	DEPARTMENT_ID integer not null, 
+	DEPARTMENT_NAME varchar(255), 
+	departmentManager_EMPLOYEE_ID integer, 
+	location_LOCATION_ID integer, 
+	primary key (DEPARTMENT_ID));
+	
+create table EMPLOYEES (
+	EMPLOYEE_ID integer not null, 
+	COMMISSION_PCT numeric, 
+	EMAIL varchar(255), 
+	FIRST_NAME varchar(255) not null, 
+	HIRE_DATE timestamp not null, 
+	LAST_NAME varchar(255) not null, 
+	PHONE_NUMBER varchar(255), 
+	SALARY numeric, 
+	departmentId_DEPARTMENT_ID integer, 
+	job_JOB_ID integer not null, 
+	manager_EMPLOYEE_ID integer, 
+	primary key (EMPLOYEE_ID), 
+	unique (EMAIL), 
+	unique (job_JOB_ID));
+	
+create table JOBS (
+	JOB_ID integer not null, 
+	JOB_TITLE varchar(255) not null, 
+	MAX_SALARY numeric, 
+	MIN_SALARY numeric, 
+	primary key (JOB_ID));
+	
+create table LOCATIONS (
+	LOCATION_ID integer not null, 
+	CITY varchar(255) not null, 
+	POSTAL_CODE varchar(255), 
+	STATE_PROVINCE varchar(255),
+	STREET_ADDRESS varchar(255), 
+	country_COUNTRY_ID integer, 
+	primary key (LOCATION_ID));
+	
+
+create table REGIONS (
+	REGION_ID integer not null, 
+	REGION_NAME varchar(255), 
+	primary key (REGION_ID));
+
+
+
+alter table COUNTRIES add constraint FKF6B7AA9421FA6004 foreign key (region_REGION_ID) references REGIONS;
+alter table DEPARTMENTS add constraint FK9F8DBB4137F4F125 foreign key (location_LOCATION_ID) references LOCATIONS;
+alter table DEPARTMENTS add constraint FK9F8DBB41D8B525EB foreign key (departmentManager_EMPLOYEE_ID) references EMPLOYEES;
+alter table EMPLOYEES add constraint FK4351FF65D5119E7D foreign key (manager_EMPLOYEE_ID) references EMPLOYEES;
+alter table EMPLOYEES add constraint FK4351FF657FF91B7D foreign key (departmentId_DEPARTMENT_ID) references DEPARTMENTS;
+alter table EMPLOYEES add constraint FK4351FF6571340527 foreign key (job_JOB_ID) references JOBS;
+alter table LOCATIONS add constraint FK5EBC673EC4E44E8E foreign key (country_COUNTRY_ID) references COUNTRIES;
